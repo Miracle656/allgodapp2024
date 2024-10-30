@@ -5,13 +5,16 @@ import ConnectWallet from './components/ConnectWallet'
 import Transact from './components/Transact'
 import AppCalls from './components/AppCalls'
 
-interface HomeProps {}
+
+
+interface HomeProps { }
 
 const Home: React.FC<HomeProps> = () => {
   const [openWalletModal, setOpenWalletModal] = useState<boolean>(false)
   const [openDemoModal, setOpenDemoModal] = useState<boolean>(false)
   const [appCallsDemoModal, setAppCallsDemoModal] = useState<boolean>(false)
   const { activeAddress } = useWallet()
+
 
   const toggleWalletModal = () => {
     setOpenWalletModal(!openWalletModal)
@@ -24,6 +27,8 @@ const Home: React.FC<HomeProps> = () => {
   const toggleAppCallsModal = () => {
     setAppCallsDemoModal(!appCallsDemoModal)
   }
+
+
 
   return (
     <div className="hero min-h-screen bg-teal-400">
