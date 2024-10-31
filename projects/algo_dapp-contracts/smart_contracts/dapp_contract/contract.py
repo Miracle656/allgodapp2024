@@ -23,7 +23,7 @@ class DappContract(ARC4Contract):
     @abimethod()
     def register_identity(self, did: String, public_key: String) -> String:
         key_val: dict[String, String] = {
-            String('myexample.algo'): String('algo1234567890')
+            'myexample.algo': 'algo1234567890'
         }
         if len(key_val) != 0:
             return "DID: " + did + " is already registered"
