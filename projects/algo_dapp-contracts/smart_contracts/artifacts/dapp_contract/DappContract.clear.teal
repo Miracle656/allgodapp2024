@@ -1,5 +1,0 @@
-#pragma version 10
-
-smart_contracts.dapp_contract.contract.DappContract.clear_state_program:
-    int 1
-    return
