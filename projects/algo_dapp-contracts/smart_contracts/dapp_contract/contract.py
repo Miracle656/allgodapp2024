@@ -1,4 +1,4 @@
-from algopy import ARC4Contract, String
+from algopy import *
 from algopy.arc4 import abimethod
 
 
@@ -10,42 +10,38 @@ from algopy.arc4 import abimethod
 
 class DappContract(ARC4Contract):
 
-    did: String
-    public_key: String
-    
-    #create the app
+    assetID: UInt64
+    unitaryPrice: UInt64
+
     @abimethod(allow_actions=["NoOp"], create="require")
-    def creatApplication(self, did: String, public_key: String) -> None:
-        self.did = did
-        self.public_key = public_key
-    
+    def createApplication(self, assetID: Asset, unitaryPrice: UInt64) -> None:
+        self.assetID = assetID.id
+        self.unitaryPrice = unitaryPrice
 
     @abimethod()
-    def register_identity(self, did: String, public_key: String) -> String:
-        key_val: dict[String, String] = {
-            'myexample.algo': 'algo1234567890'
-        }
-        if len(key_val) != 0:
-            return "DID: " + did + " is already registered"
+    def optInAsset(self, mbrPay: gtxn.PaymentTransaction) -> None:
+        assert Txn.sender == Global.creator_address
+        assert not Global.current_application_address.is_opted_in(Asset(self.assetID))
+        
+        assert mbrPay.receiver == Global.current_application_address
+        assert mbrPay.amount == Global.min_balance + Global.asset_opt_in_min_balance
+        itxn.AssetTransfer(
+            xfer_asset=self.assetID,
+            asset_receiver=Global.current_application_address,
+            asset_amount=0,
+        ).submit()
 
-        key_val[public_key] = did
-        return "DID successfully registerd: " + did
+    @abimethod()
+    def buy(self, buyerTxn: gtxn.PaymentTransaction, quantity: UInt64) -> None:
+        assert self.unitaryPrice !=  UInt64(0)
+        assert Txn.sender == buyerTxn.sender
+        assert buyerTxn.receiver == Global.current_application_address
+        assert buyerTxn.amount == self.unitaryPrice * quantity
+        
+        itxn.AssetTransfer(
+            xfer_asset=self.assetID,
+            asset_receiver=Txn.sender,
+            asset_amount= quantity,
+        ).submit()
 
-# class DappContract(ARC4Contract):
-
-#     global_state = GlobalState(str)
-
-#     def __init__(self) -> None:
-#         super().__init__()
-
-#         self.did_key = self.global_state.key("did_key")
-
-#         self.public_key = self.global_state.key("public_key")
-
-#     @abimethod()
-#     def register_identity(self, did: String, public_key: String) -> str:
-#         if self.did_key.has(did):
-#             return "DID already registered"
-
-#         self.did_key.set(did, public_key)
-#         return "Identity registered with DID:" + str(did) +  "and public key:" + str(public_key)
+    

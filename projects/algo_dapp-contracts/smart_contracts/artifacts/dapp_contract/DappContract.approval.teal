@@ -1,0 +1,181 @@
+#pragma version 10
+
+smart_contracts.dapp_contract.contract.DappContract.approval_program:
+    callsub __puya_arc4_router__
+    return
+
+
+// smart_contracts.dapp_contract.contract.DappContract.__puya_arc4_router__() -> uint64:
+__puya_arc4_router__:
+    proto 0 1
+    txn NumAppArgs
+    bz __puya_arc4_router___after_if_else@8
+    method "createApplication(asset,uint64)void"
+    method "optInAsset(pay)void"
+    method "buy(pay,uint64)void"
+    txna ApplicationArgs 0
+    match __puya_arc4_router___createApplication_route@2 __puya_arc4_router___optInAsset_route@3 __puya_arc4_router___buy_route@4
+    int 0
+    retsub
+
+__puya_arc4_router___createApplication_route@2:
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    !
+    assert // is creating
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    txna ApplicationArgs 2
+    btoi
+    callsub createApplication
+    int 1
+    retsub
+
+__puya_arc4_router___optInAsset_route@3:
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    txn GroupIndex
+    int 1
+    -
+    dup
+    gtxns TypeEnum
+    int pay
+    ==
+    assert // transaction type is pay
+    callsub optInAsset
+    int 1
+    retsub
+
+__puya_arc4_router___buy_route@4:
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    txn GroupIndex
+    int 1
+    -
+    dup
+    gtxns TypeEnum
+    int pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    btoi
+    callsub buy
+    int 1
+    retsub
+
+__puya_arc4_router___after_if_else@8:
+    int 0
+    retsub
+
+
+// smart_contracts.dapp_contract.contract.DappContract.createApplication(assetID: uint64, unitaryPrice: uint64) -> void:
+createApplication:
+    proto 2 0
+    byte "assetID"
+    frame_dig -2
+    app_global_put
+    byte "unitaryPrice"
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.dapp_contract.contract.DappContract.optInAsset(mbrPay: uint64) -> void:
+optInAsset:
+    proto 1 0
+    txn Sender
+    global CreatorAddress
+    ==
+    assert
+    global CurrentApplicationAddress
+    int 0
+    byte "assetID"
+    app_global_get_ex
+    assert // check self.assetID exists
+    asset_holding_get AssetBalance
+    bury 1
+    !
+    assert
+    frame_dig -1
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert
+    frame_dig -1
+    gtxns Amount
+    global MinBalance
+    global AssetOptInMinBalance
+    +
+    ==
+    assert
+    itxn_begin
+    int 0
+    byte "assetID"
+    app_global_get_ex
+    assert // check self.assetID exists
+    global CurrentApplicationAddress
+    int 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    int axfer
+    itxn_field TypeEnum
+    int 0
+    itxn_field Fee
+    itxn_submit
+    retsub
+
+
+// smart_contracts.dapp_contract.contract.DappContract.buy(buyerTxn: uint64, quantity: uint64) -> void:
+buy:
+    proto 2 0
+    int 0
+    byte "unitaryPrice"
+    app_global_get_ex
+    assert // check self.unitaryPrice exists
+    assert
+    txn Sender
+    frame_dig -2
+    gtxns Sender
+    ==
+    assert
+    frame_dig -2
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert
+    frame_dig -2
+    gtxns Amount
+    int 0
+    byte "unitaryPrice"
+    app_global_get_ex
+    assert // check self.unitaryPrice exists
+    frame_dig -1
+    *
+    ==
+    assert
+    itxn_begin
+    int 0
+    byte "assetID"
+    app_global_get_ex
+    assert // check self.assetID exists
+    txn Sender
+    frame_dig -1
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    int axfer
+    itxn_field TypeEnum
+    int 0
+    itxn_field Fee
+    itxn_submit
+    retsub
