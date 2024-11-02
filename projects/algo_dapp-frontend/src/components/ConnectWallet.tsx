@@ -12,11 +12,15 @@ const ConnectWallet = ({ openModal, closeModal }: ConnectWalletInterface) => {
   const isKmd = (provider: Provider) => provider.metadata.name.toLowerCase() === 'kmd'
 
   return (
-    <dialog id="connect_wallet_modal" className={`modal ${openModal ? 'modal-open' : ''}`}style={{ display: openModal ? 'block' : 'none' }}>
+    <dialog id="connect_wallet_modal" className={`modal ${openModal ? 'modal-open' : ''}`} style={{ display: openModal ? 'block' : 'none' }}>
       <form method="dialog" className="modal-box">
         <h3 className="font-bold text-2xl">Select wallet provider</h3>
 
-        <div className="grid m-2 pt-5">
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }} className="grid m-2 pt-5">
           {activeAddress && (
             <>
               <Account />
@@ -26,7 +30,19 @@ const ConnectWallet = ({ openModal, closeModal }: ConnectWalletInterface) => {
 
           {!activeAddress &&
             providers?.map((provider) => (
-              <button
+              <button style={{
+                cursor: "pointer",
+                borderRadius: "30px",
+                width: "20rem",
+                padding: ".7rem",
+                fontSize: "1rem",
+                color: "white",
+                backgroundColor: "black",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "5px"
+              }}
                 data-test-id={`${provider.metadata.id}-connect`}
                 className="btn border-teal-800 border-1  m-2"
                 key={`provider-${provider.metadata.id}`}
@@ -47,7 +63,17 @@ const ConnectWallet = ({ openModal, closeModal }: ConnectWalletInterface) => {
         </div>
 
         <div className="modal-action grid">
-          <button
+          <button style={
+            {
+              cursor: "pointer",
+              borderRadius: "30px",
+              width: "10rem",
+              padding: ".7rem",
+              fontSize: "1rem",
+              color: "white",
+              backgroundColor: "black"
+            }
+          }
             data-test-id="close-wallet-modal"
             className="btn"
             onClick={() => {
@@ -58,6 +84,15 @@ const ConnectWallet = ({ openModal, closeModal }: ConnectWalletInterface) => {
           </button>
           {activeAddress && (
             <button
+              style={{
+                cursor: "pointer",
+                borderRadius: "30px",
+                width: "10rem",
+                padding: ".7rem",
+                fontSize: "1rem",
+                color: "white",
+                backgroundColor: "black"
+              }}
               className="btn btn-warning"
               data-test-id="logout"
               onClick={() => {
