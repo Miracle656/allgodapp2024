@@ -167,8 +167,7 @@ const Home: React.FC<HomeProps> = () => {
                 padding: ".7rem",
                 fontSize: "1.1rem",
                 color: "white",
-                backgroundColor: "black",
-                marginTop: "-2rem"
+                backgroundColor: "black"
               }} data-test-id="transactions-demo" className="btn m-2" onClick={toggleDemoModal}>
                 get id
               </button>
