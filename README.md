@@ -1,6 +1,6 @@
 # algo_dapp
 
-This starter full stack project has been generated using AlgoKit. See below for default getting started instructions.
+This starter full stack project has been generated using AlgoKit and guide on how to run algoDID on your local machine. See below for default getting started instructions.
 
 ## Setup
 
@@ -40,6 +40,19 @@ When you compile and generate smart contract artifacts, your frontend component 
 
 The frontend starter also provides an example of interactions with your DappContractClient in [`AppCalls.tsx`](projects/algo_dapp-frontend/src/components/AppCalls.tsx) component by default.
 
-## Next Steps
+## How to test (local machine
 
-You can take this project and customize it to build your own decentralized applications on Algorand. Make sure to understand how to use AlgoKit and how to write smart contracts for Algorand before you start.
+- make sure to have algokit installed
+- clone the repository
+- switch system directory to the cloned repo
+- run the command,`algokit bootstrap all` in your terminal
+  To interact with the frontend
+- navigate to the frontend folder
+- run the command `npm run dev` in your terminal
+  To interact with the smart contract
+- navigate to the backend folder
+- run the command `algokit localnet start` followed by `algokit explore` in your terminal (this should open lora in your web browser)
+- on lora switch network to testnet and upload the `.json` file from the contracts folder
+- Deploy and interact
+
+## NB: This project is still very much under development
